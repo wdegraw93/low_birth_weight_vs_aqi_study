@@ -4,6 +4,7 @@ import requests
 from urllib.parse import urlencode
 from yarl import URL
 from time import sleep
+from getpass import getpass
 
 def get_state_codes(email, key):
     '''
@@ -97,22 +98,44 @@ def aqs_api_annual_county(email, key, param, bdate, edate, state, county):
     
 #---------------------------------
 email = input('Email for query: ')
-key = input('API key for query: ')
+key = getpass('API key for query: ')
 beginning_year = int(input('First year of interest: '))
 end_year = int(input('Last year of interest (if only want one year put the same year): '))
+start_state = input('State to begin at, please put in full name. Just hit enter if wish to get all states: ')
 
 state_codes = get_state_codes(email,key)
+if start_state!='':
+    start_state_index = state_codes[state_codes['value_represented'].str.lower() == start_state.lower()].index[0]
+else:
+    start_state_index = 0
+
 param_codes = get_param_codes_by_class(email, key, 'CRITERIA').astype(str)
 params_1 = ','.join(param_codes[:4].values)
 params_2 = ','.join(param_codes[4:].values)
 params = [params_1, params_2]
+
 years = np.arange(beginning_year, end_year+1).astype(str)
 
 data_list = []
-state_count=0
-for state_code, state in state_codes.values[:-2]:
+state_count = start_state_index
+
+# loop over all desired states, years, counties, and parameters. 
+# not including Canada, Mexico, and start from whichever state was input (if any)
+for state_code, state in state_codes.iloc[start_state_index:].values[:-2]:
     state_count += 1
-# Query for county codes at the top to avoid repeated queries
+    
+    # check if there is state data already, if so then write it to a csv
+    if len(data_list)>0:
+        data = pd.concat(data_list, ignore_index=True)
+        if beginning_year == end_year:
+            data.to_csv(f'data/AQS_county_data_{state_codes["value_represented"].iloc[state_count-2]}_{beginning_year}.csv', index=False)
+        else:
+            data.to_csv(f'data/AQS_county_data_{state_codes["value_represented"].iloc[state_count-2]}_{beginning_year}_{end_year}.csv', index=False)
+    
+    # make sure data_list is empty before filling it up again
+    data_list=[]
+    
+    # Query for county codes at the top to avoid repeated queries
     county_codes = get_county_codes(email,key,state_code)
     for year in years:
         print('--------------------')
@@ -124,10 +147,11 @@ for state_code, state in state_codes.values[:-2]:
             print(f'County {county_count}/{len(county_codes)}')
             for param in params:
                 data_list.append( aqs_api_annual_county(email, key, param, year+'0101', year+'1231', state_code, county) )
+                # Have to sleep for API to be happy
                 sleep(2)
-                
+
 data = pd.concat(data_list, ignore_index=True)
 if beginning_year == end_year:
-    data.to_csv(f'data/AQS_county_data_{beginning_year}.csv', index=False)
+    data.to_csv(f'data/AQS_county_data_{state}_{beginning_year}.csv', index=False)
 else:
-    data.to_csv(f'data/AQS_county_data_{beginning_year}_{end_year}.csv', index=False)
+    data.to_csv(f'data/AQS_county_data_{state}_{beginning_year}_{end_year}.csv', index=False)
