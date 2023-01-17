@@ -4,6 +4,7 @@ import requests
 from urllib.parse import urlencode
 from yarl import URL
 from time import sleep
+from getpass import getpass
 
 def get_state_codes(email, key):
     '''
@@ -97,7 +98,7 @@ def aqs_api_annual_county(email, key, param, bdate, edate, state, county):
     
 #---------------------------------
 email = input('Email for query: ')
-key = input('API key for query: ')
+key = getpass('API key for query: ')
 beginning_year = int(input('First year of interest: '))
 end_year = int(input('Last year of interest (if only want one year put the same year): '))
 start_state = input('State to begin at, please put in full name. Just hit enter if wish to get all states: ')
