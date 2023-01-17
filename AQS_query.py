@@ -105,7 +105,7 @@ param_codes = get_param_codes_by_class(email, key, 'CRITERIA')
 years = np.arange(beginning_year, end_year+1).astype(str)
 
 data_list = []
-for state_code, state in state_codes.values:
+for state_code, state in state_codes.values[:-2]:
     # Query for county codes at the top to avoid repeated queries
     county_codes = get_county_codes(email,key,state_code)
     for year in years:
