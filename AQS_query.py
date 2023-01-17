@@ -3,6 +3,7 @@ import numpy as np
 import requests
 from urllib.parse import urlencode
 from yarl import URL
+from time import sleep
 
 def get_state_codes(email, key):
     '''
@@ -123,6 +124,7 @@ for state_code, state in state_codes.values[:-2]:
             print(f'County {county_count}/{len(county_codes)}')
             for param in params:
                 data_list.append( aqs_api_annual_county(email, key, param, year+'0101', year+'1231', state_code, county) )
+                sleep(2)
                 
 data = pd.concat(data_list, ignore_index=True)
 if beginning_year == end_year:
