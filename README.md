@@ -5,16 +5,15 @@
 
 
 Background & Problem Statement
+
 Research Question
+
 Data Description
+
 Software Requirements
+
 Conclusion & Recommendations
 
-Notebook_01_Data_Import_and_Cleaning
-Notebook_02_Data_Cleaning
-Notebook_03_Data_Modeling
-
-(A table of contents, which should indicate which notebook or scripts a stakeholder should start with, and a link to an executive summary.)
 
 ## Background & Problem Statement
 
@@ -24,29 +23,21 @@ Research on the health effects of exposure to these pollutants is ongoing. One a
 
 Results of these studies are sparking alarm among environmental science, medical, and education specialists alike. Because of this, our team was hired by a task force composed of administrators from each of these communities to confirm these findings, and shed additional light on the situation. The goal of the current project, therefore, is to highlight the effects of the various pollutants on the percentage of births per county that are of low birth weight. With our findings, we hope to underscore the importance of implementing mitigating factors in order to protect the youngest members of society. 
 
-In order to do this, we collect, merge and analyze data from the CDC (Center for Disease Control) and EPA in order to search for possible links. We then create a model to predict whether or not each county has a “high rate” of low birth weight births for each United States county using classification and neural nets. Our baseline standard is [ ], which represents [ ]. In the evaluation process, we use [ ] as our metrics, and define a successful model as [ ].
+In order to do this, we collect, merge and analyze data from the CDC (Center for Disease Control) and EPA in order to search for possible links. We then create a model to predict whether or not each county has a “high rate” of low birth weight births for each United States county using classification model(s).  We calculated the current mean rate of low birth weight (6.88%) and then created a boolean feature of whether the location had a high rate or not for the year the data was collected.  Our baseline standard is 58.6% babies born in the ‘normal’ birth weight category. In the evaluation process, we use accuracy and false negative rate as our metrics, and define a successful model as one that maximizes and minimizes these, respectively.
 
-Is it clear what the goal of the project is?
-Is it clear who cares about this or why this is important to investigate?
-Does the student consider the audience and the primary and secondary stakeholders
-1) Making sure you have a well-rounded PS that clearly identifies 
-2) the type of model/s you will build
-3) the metric/s you'll use to evaluate your model
-4) how you define a successful project (eg % performance over the baseline)
 
-References:
+#### References:
 
 Air Quality Index - A Guide to Air Quality and Your Health
-[https://www.airnow.gov/sites/default/files/2018-04/aqi_brochure_02_14_0.pdf]
-
+https://www.airnow.gov/sites/default/files/2018-04/aqi_brochure_02_14_0.pdf
 Air Pollution, Stress Contribute to Low-birth-weight Babies for L.A. Latinas, Study Finds
-[https://news.usc.edu/202917/stress-air-pollution-and-babies_latinas/#:~:text=Conclusions%20from%20study%20on%20stress,%2Fm3)%20of%20PM2.]
+https://news.usc.edu/202917/stress-air-pollution-and-babies_latinas/#:~:text=Conclusions%20from%20study%20on%20stress,%2Fm3)%20of%20PM2.
 
 Using the Air Quality Index
-[https://www.airnow.gov/aqi/aqi-basics/using-air-quality-index/]
+https://www.airnow.gov/aqi/aqi-basics/using-air-quality-index/
 
 Your Health
-[https://www.airnow.gov/air-quality-and-health/your-health/#:~:text=Symptoms%20may%20include%3A%20irritation%20of,lung%20disease)%2C%20and%20children.]
+https://www.airnow.gov/air-quality-and-health/your-health/#:~:text=Symptoms%20may%20include%3A%20irritation%20of,lung%20disease)%2C%20and%20children.
 
 —
 
@@ -56,7 +47,6 @@ Your Health
 Can we use data collected from EPA and CDC websites to predict a higher prevalence of low birth weights in United States counties based on the pollutants present?
 
 
-(A succinct formulation of the question your analysis seeks to answer.)
 
 ---
 
@@ -93,25 +83,31 @@ We used the WONDER tool from the CDC to export the necessary files into a notebo
 Generally, we found that the AQS data has more detail; however, there were fewer counties with a large set of pollutant data. Because of this, we created both a set of merged data from the AQS API data and a set from the AQI Annual Summary data. Both were merged in a way where the current year of air quality data (AQS or AQI) is merged with the following year CDC data. 
 
 
-A paragraph description of the data you used, plus your data acquisition, ingestion, and cleaning steps.
+##### Cleaned Files
+After cleaning the data as discussed above, two files were created that were the foundation for the Exploratory Data Analysis (EDA) and modeling.  These files are available in the data directory of the project repository.
 
+
+* `annual_aqi_clean.csv` : contains the annual summary of count of days by AQI health categories as well as count of days where some of the main pollutants were the most prevalent, combined with the low birth weight data including the calculated rate and indication of whether the rate is high.
+* `aqs_by_county_clean.csv` : contains more specific sensor measurements by county summarized by year, combined with the low birth weight data including the calculated rate and indication of whether the rate is high.
+
+
+##### Code
+The various steps of our process are contained in the following notebooks and scripts:
+* `AQS_query.py`: script used to collect the sensor data from the Air Quality System
+* `01_data_collect_and_clean.ipynb` : notebook for collecting and collating data as well as cleaning, merging, and exporting the cleaned files
+* `02_EDA.ipynb`: notebook exploring the cleaned data files created from the data collection notebook including various visualizations
+* `03_Modeling.ipynb`: notebook containing the modeling carried out including evaluation of the final model
 ---
 
 ## Software Requirements
 
-We used Pandas, Scikit-learn, Numpy, Matplotlib, and Seaborn.
-
-A short description of software requirements (e.g., Pandas, Scikit-learn) required by your analysis.
+We used Pandas, Scikit-learn, Numpy, Matplotlib, Seaborn, and TensorFlow.
 -----
-## Conclusion & Recommendations
-
-
+## Results & Recommendations
+Our best working model is a Neural Net classifier. It is saved in the `data/models` notebook with reference `_7537`. Code for loading it is present in the modeling notebook, so that if one wishes to see its performance they do not need to retrain the model. Our final accuracy is 75.37%, an improvement of 40% over baseline prediction. Our false negative rate is 20%.
 We sought to describe a link between air quality in the prior year and rate of low birthrate in the following year. The biggest challenge we faced was incomplete data. In spite of this, we have results that do show a connection, although it is small. In order to create a more predictive model in the future, we will need more robust air quality data.
 
 
 -----
-(In a separate repo file)
 
-## Executive Summary
 
-https://www.proposify.com/blog/executive-summary
